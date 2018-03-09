@@ -8,6 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/search/:query', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var url = "https://itunes.apple.com/search?media=podcast&term=" + req.params.query;
 
   var json = {
@@ -23,11 +24,13 @@ router.get('/search/:query', function(req, res, next) {
 
     if(body && body.resultCount && body.resultCount > 0) {
         body.results.forEach(function(elem, ind) {
+          var hires = elem.artworkUrl100.replace('100x100','480x480');
           var podcast = {
             id: elem.collectionId,
-            thumb: elem.artworkUrl100,
+            thumb: hires,
             name: elem.collectionName,
-            author: elem.artistName
+            author: elem.artistName,
+            country: elem.country
           };
 
           json.podcasts[ind] = podcast;
@@ -88,6 +91,7 @@ router.get('/highlights/:country/:limit', function(req, res, next) {
 });
 
 router.get('/podcast/:country/:id', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var url = 'https://itunes.apple.com/lookup?country=' + req.params.country + '&id=' + req.params.id;
 
   var json = {
@@ -112,12 +116,14 @@ router.get('/podcast/:country/:id', function(req, res, next) {
 
     if(body.resultCount && body.resultCount > 0) {
       json.id = body.results[0].collectionId;
-      json.thumb = body.results[0].artworkUrl100;
+      json.thumb = body.results[0].artworkUrl100.replace('100x100','480x480');
       json.name = body.results[0].collectionName;
       json.author = body.results[0].artistName;
       json.category = body.results[0].primaryGenreName;
       json.feed = body.results[0].feedUrl;
 
+      console.log(json.feed)
+      console.log(json.name)
       var result = request('GET', json.feed);
 
       if(result.statusCode == 200) {
@@ -136,6 +142,7 @@ router.get('/podcast/:country/:id', function(req, res, next) {
                 if(elem.enclosure && elem.enclosure.length > 0) {
                   if(elem.enclosure[0].$ && elem.enclosure[0].$.url) {
                     var episode = {
+                      id: ind,
                       thumb: json.thumb,
                       author: json.author,
                       title: null,
@@ -197,7 +204,7 @@ router.get('/podcast/:country/:id', function(req, res, next) {
     } else {
       json = {
         status: 400
-      };  
+      };
     }
   } else {
     json = {
@@ -211,6 +218,7 @@ router.get('/podcast/:country/:id', function(req, res, next) {
 
 router.get('/podcast_feed/:id', function(req, res, next) {
   var url = 'https://itunes.apple.com/lookup?id=' + req.params.id;
+  res.header("Access-Control-Allow-Origin", "*");
 
   var json = {
     status: 200,
