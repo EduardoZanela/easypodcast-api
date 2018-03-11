@@ -10,6 +10,6 @@ module.exports = {
             thumbnail: req.body.thumbnail
         })
         .then(podcast => res.status(201).send(podcast))
-        .catch(error => res.send(400).send(error));
+        .catch(error => res.status(400).send(error));
     }
 };

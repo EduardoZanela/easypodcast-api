@@ -9,6 +9,8 @@ router.post('/', function(req, res, next){req.giaco = true; next(); }, users.cre
 
 router.get('/', function(req, res, next){req.giaco = true; next(); }, isAuthenticated, users.findAll);
 
-router.post('/subscribe', function(req, res, next){req.giaco = true; next(); }, isAuthenticated, users.subscribe);
+router.put('/subscribe', function(req, res, next){req.giaco = true; next(); }, isAuthenticated, users.subscribe);
+
+router.delete('/subscribe', function(req, res, next){req.giaco = true; next(); }, isAuthenticated, users.unsubscribe);
 
 module.exports = router;
