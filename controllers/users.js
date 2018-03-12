@@ -3,14 +3,20 @@ const podcast = require('../models').Podcast;
 
 module.exports = {
     create(req, res) {
-        console.log(JSON.stringify(req.body))
+        if(!req.body.email.trim() || !req.body.name.trim() || !req.body.password.trim()){
+            return res.status(403).send({
+                error: 'All fields is required'
+              })
+        }
         return user.create({
             email: req.body.email,
             password: req.body.password,
             birthday: req.body.birthday,
             name: req.body.name
         })
-        .then(user => res.status(201).send(user))
+        .then(user => {
+            res.status(201).send(user)
+        })
         .catch(error => res.status(400).send(error));
     },
     findAll(req, res) {

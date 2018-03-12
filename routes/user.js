@@ -5,7 +5,7 @@ var router = express.Router();
 var users = require('../controllers/users');
 var isAuthenticated = require('../policies/isAuthenticated')
 
-router.post('/', function(req, res, next){req.giaco = true; next(); }, users.create);
+router.post('/', users.create);
 
 router.get('/', function(req, res, next){req.giaco = true; next(); }, isAuthenticated, users.findAll);
 
